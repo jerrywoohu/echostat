@@ -1,4 +1,4 @@
-from PIL import Image, ImageGrab, ImageOps, PngImagePlugin, JpegImagePlugin
+from PIL import Image, ImageGrab, ImageOps, PngImagePlugin, JpegImagePlugin, ImageEnhance
 from ctypes import windll
 import pytesseract
 import time
@@ -8,7 +8,8 @@ from CONSTANTS import *
 
 pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract'
 
-sample_image = './samples/sample0.jpg'
+# sample_image = './samples/sample0.jpg'
+sample_image = ''
 
 def pad_image(image):
     right = 48
@@ -36,11 +37,13 @@ def crop_ratio(image, ratio):
     else:
         return image
 
-def get_image_by_region(source, region, point=168, mono=False):
+def get_image_by_region(source, region, point=168, mono=False, contrast = 1):
     left, top, right, bottom = region
     source_width, source_height = source.size
     scrap = cropped.crop((left * source_width, top * source_height, right * source_width, bottom * source_height))
     scrap = pad_image(scrap)
+    if contrast != 1:
+        scrap = ImageEnhance.Contrast(scrap).enhance(contrast)
     # scrap = ImageOps.invert(scrap.convert('RGB'))
     scrap = scrap.convert('L')
     # scrap.show()
@@ -99,7 +102,7 @@ def ocr_on_words(image):
 def combine_stats(image):
     hero_name = get_image_by_region(image, STAT_REGIONS['hero_name_region'])
     # hero_name.show()
-    match_time = get_image_by_region(image, STAT_REGIONS['match_time_region'], 100)
+    match_time = get_image_by_region(image, STAT_REGIONS['match_time_region'], point=100, contrast=3.5)
     # match_time.show()
 
     gstat1 = get_image_by_region(image, STAT_REGIONS['g_region1'])
@@ -119,12 +122,12 @@ def combine_stats(image):
     # hstat5.show()
     # hstat6.show()
 
-    hstat1_name = get_image_by_region(image, STAT_REGIONS['h_region1_name'], point=100)
-    hstat2_name = get_image_by_region(image, STAT_REGIONS['h_region2_name'], point=100)
-    hstat3_name = get_image_by_region(image, STAT_REGIONS['h_region3_name'], point=100)
-    hstat4_name = get_image_by_region(image, STAT_REGIONS['h_region4_name'], point=100)
-    hstat5_name = get_image_by_region(image, STAT_REGIONS['h_region5_name'], point=100)
-    hstat6_name = get_image_by_region(image, STAT_REGIONS['h_region6_name'], point=100)
+    hstat1_name = get_image_by_region(image, STAT_REGIONS['h_region1_name'], point=100, contrast=2.5)
+    hstat2_name = get_image_by_region(image, STAT_REGIONS['h_region2_name'], point=100, contrast=2.5)
+    hstat3_name = get_image_by_region(image, STAT_REGIONS['h_region3_name'], point=100, contrast=2.5)
+    hstat4_name = get_image_by_region(image, STAT_REGIONS['h_region4_name'], point=100, contrast=2.5)
+    hstat5_name = get_image_by_region(image, STAT_REGIONS['h_region5_name'], point=100, contrast=2.5)
+    hstat6_name = get_image_by_region(image, STAT_REGIONS['h_region6_name'], point=100, contrast=2.5)
 
     # hstat1_name.show()
     # hstat2_name.show()
@@ -210,18 +213,22 @@ def get_pastable(match_result, hero=''):
 def match_hero_stats(hero_stats, stat_map):
     return_dictionary = {}
     for index, stat in enumerate(hero_stats):
-        if stat_map[index] != None:
+        if stat_map and stat_map[index] != None:
             return_dictionary[stat_map[index]] = stat['value']
     return return_dictionary
 
 def infer_hero(hero_stats):
     results = []
     for hero_name in STAT_MAPS:
-        stat_dict = filter(lambda x: x != None, STAT_MAPS[hero_name])
+        # stat_dict = filter(lambda x: x != None, STAT_MAPS[hero_name])
+        stat_dict = []
+        for stat_name in STAT_MAPS[hero_name]:
+            if stat_name != None:
+                stat_dict.append(stat_name.replace('_', ' '))
         # print(hero_name)
         count = 0
         for hero_stat in hero_stats:
-            massaged_name = hero_stat['name'].replace(' ', '_').lower()
+            massaged_name = ' '.join(hero_stat['name'].replace('-', ' ').lower().split())
             # print(massaged_name)
             if massaged_name in stat_dict:
                 count += 1
@@ -242,10 +249,13 @@ while True:
 
     # try:
     if sample_image == '':
-        screenshot = ImageGrab.grabclipboard()
+        try:
+            screenshot = ImageGrab.grabclipboard()
+        except:
+            pass
     else:
         screenshot = Image.open(sample_image)
-    print(type(screenshot))
+    # print(type(screenshot))
     if isinstance(screenshot, PngImagePlugin.PngImageFile) or isinstance(screenshot, JpegImagePlugin.JpegImageFile):
         detected = True
         print('screenshot detected')
