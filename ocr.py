@@ -5,6 +5,7 @@ import time
 import os
 import difflib
 from CONSTANTS import *
+from USER_CONFIG import *
 
 pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract'
 
@@ -12,10 +13,10 @@ pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tessera
 sample_image = ''
 
 def pad_image(image):
-    right = 48
-    left = 48
-    top = 48
-    bottom = 48
+    right = 64
+    left = 64
+    top = 64
+    bottom = 64
     width, height = image.size
     new_width = width + right + left
     new_height = height + top + bottom
@@ -31,29 +32,35 @@ def crop_ratio(image, ratio):
             # print(str(title_bar_height))
             return image.crop((0, title_bar_height, width, height))
         else:
-            new_width = height * screen_ratio
+            new_width = height * SCREEN_RATIO
             diff = width - new_width
             return image.crop((diff / 2, 0, (diff/2) + new_width, height))
     else:
         return image
 
-def get_image_by_region(source, region, point=168, mono=False, contrast = 1):
+def get_image_by_region(source, region):
     left, top, right, bottom = region
     source_width, source_height = source.size
-    scrap = cropped.crop((left * source_width, top * source_height, right * source_width, bottom * source_height))
-    scrap = pad_image(scrap)
+    scrap = source.crop((left * source_width, top * source_height, right * source_width, bottom * source_height))
+    return scrap
+
+def prep_image_for_ocr(image, point, mono, contrast):
+    scrap = pad_image(image)
     if contrast != 1:
         scrap = ImageEnhance.Contrast(scrap).enhance(contrast)
-    # scrap = ImageOps.invert(scrap.convert('RGB'))
     scrap = scrap.convert('L')
     # scrap.show()
     if mono:
         scrap = scrap.point(lambda p: 255 if p > point else 0)
     else:
         scrap = scrap.point(lambda p: p if p > point else 0)
+    scrap = ImageOps.invert(scrap.convert('RGB'))
     # scrap = scrap.convert('1')
     # scrap.show()
     return scrap
+
+def get_prepped_region(source, region, point=128, mono=False, contrast=1):
+    return prep_image_for_ocr(get_image_by_region(source, region), point, mono, contrast)
 
 def ocr_on_stat(image):
     result = pytesseract.image_to_string(image, config=TESSERACT_CONFIG + ' -c tessedit_char_whitelist=0123456789:%')
@@ -100,34 +107,35 @@ def ocr_on_words(image):
 #     return result
 
 def combine_stats(image):
-    hero_name = get_image_by_region(image, STAT_REGIONS['hero_name_region'])
+    hero_name = get_prepped_region(image, STAT_REGIONS['hero_name_region'])
     # hero_name.show()
-    match_time = get_image_by_region(image, STAT_REGIONS['match_time_region'], point=100, contrast=3.5)
+    match_time = get_prepped_region(image, STAT_REGIONS['match_time_region'], point=100, contrast=3.5)
     # match_time.show()
 
-    gstat1 = get_image_by_region(image, STAT_REGIONS['g_region1'])
-    gstat2 = get_image_by_region(image, STAT_REGIONS['g_region2'])
-    gstat3 = get_image_by_region(image, STAT_REGIONS['g_region3'])
-    gstat4 = get_image_by_region(image, STAT_REGIONS['g_region4'])
-    gstat5 = get_image_by_region(image, STAT_REGIONS['g_region5'])
-    gstat6 = get_image_by_region(image, STAT_REGIONS['g_region6'])
-
-    hstat1 = get_image_by_region(image, STAT_REGIONS['h_region1'])
-    hstat2 = get_image_by_region(image, STAT_REGIONS['h_region2'])
-    hstat3 = get_image_by_region(image, STAT_REGIONS['h_region3'])
-    hstat4 = get_image_by_region(image, STAT_REGIONS['h_region4'])
-    hstat5 = get_image_by_region(image, STAT_REGIONS['h_region5'])
-    hstat6 = get_image_by_region(image, STAT_REGIONS['h_region6'])
+    gstat1 = get_prepped_region(image, STAT_REGIONS['g_region1'])
+    gstat2 = get_prepped_region(image, STAT_REGIONS['g_region2'])
+    gstat3 = get_prepped_region(image, STAT_REGIONS['g_region3'])
+    gstat4 = get_prepped_region(image, STAT_REGIONS['g_region4'])
+    gstat5 = get_prepped_region(image, STAT_REGIONS['g_region5'])
+    gstat6 = get_prepped_region(image, STAT_REGIONS['g_region6'])
+    # gstat4.show()
+    # gstat6.show()
+    hstat1 = get_prepped_region(image, STAT_REGIONS['h_region1'])
+    hstat2 = get_prepped_region(image, STAT_REGIONS['h_region2'])
+    hstat3 = get_prepped_region(image, STAT_REGIONS['h_region3'])
+    hstat4 = get_prepped_region(image, STAT_REGIONS['h_region4'])
+    hstat5 = get_prepped_region(image, STAT_REGIONS['h_region5'])
+    hstat6 = get_prepped_region(image, STAT_REGIONS['h_region6'])
     # hstat4.show()
     # hstat5.show()
     # hstat6.show()
 
-    hstat1_name = get_image_by_region(image, STAT_REGIONS['h_region1_name'], point=100, contrast=2.5)
-    hstat2_name = get_image_by_region(image, STAT_REGIONS['h_region2_name'], point=100, contrast=2.5)
-    hstat3_name = get_image_by_region(image, STAT_REGIONS['h_region3_name'], point=100, contrast=2.5)
-    hstat4_name = get_image_by_region(image, STAT_REGIONS['h_region4_name'], point=100, contrast=2.5)
-    hstat5_name = get_image_by_region(image, STAT_REGIONS['h_region5_name'], point=100, contrast=2.5)
-    hstat6_name = get_image_by_region(image, STAT_REGIONS['h_region6_name'], point=100, contrast=2.5)
+    hstat1_name = get_prepped_region(image, STAT_REGIONS['h_region1_name'], point=100, contrast=2.5)
+    hstat2_name = get_prepped_region(image, STAT_REGIONS['h_region2_name'], point=100, contrast=2.5)
+    hstat3_name = get_prepped_region(image, STAT_REGIONS['h_region3_name'], point=100, contrast=2.5)
+    hstat4_name = get_prepped_region(image, STAT_REGIONS['h_region4_name'], point=100, contrast=2.5)
+    hstat5_name = get_prepped_region(image, STAT_REGIONS['h_region5_name'], point=100, contrast=2.5)
+    hstat6_name = get_prepped_region(image, STAT_REGIONS['h_region6_name'], point=100, contrast=2.5)
 
     # hstat1_name.show()
     # hstat2_name.show()
@@ -259,7 +267,7 @@ while True:
     if isinstance(screenshot, PngImagePlugin.PngImageFile) or isinstance(screenshot, JpegImagePlugin.JpegImageFile):
         detected = True
         print('screenshot detected')
-        cropped = crop_ratio(screenshot, screen_ratio)
+        cropped = crop_ratio(screenshot, SCREEN_RATIO)
         if sample_image == '':
             cropped.show()
         match_result = combine_stats(cropped)
