@@ -66,3 +66,215 @@ STAT_MAPS = {
     'moira':            ['secondary_fire_accuracy', 'kill_streak_best', 'defensive_assists', 'coalescence_kills', 'coalescence_healing', 'self_healing', None],
     'zenyatta':         ['weapon_accuracy', 'kill_streak_best', 'offensive_assists', 'defensive_assists', 'transcendence_healing', None]
 }
+
+MAP_ALT_NAME = [
+    {
+        'real_name': 'Hanamura',
+        'alt_name': 'Hanamura'
+    },
+    {
+        'real_name': 'Temple of Anubis',
+        'alt_name': 'Anubis'
+    },
+    {
+        'real_name': 'Volskaya Industries',
+        'alt_name': 'Volskaya'
+    },
+    {
+        'real_name': 'Dorado',
+        'alt_name': 'Dorado'
+    },
+    {
+        'real_name': 'Havana',
+        'alt_name': 'Havana'
+    },
+    {
+        'real_name': 'Junkertown',
+        'alt_name': 'Junkertown'
+    },
+    {
+        'real_name': 'Rialto',
+        'alt_name': 'Rialto'
+    },
+    {
+        'real_name': 'Route 66',
+        'alt_name': 'Route 66'
+    },
+    {
+        'real_name': 'Watchpoint: Gibraltar',
+        'alt_name': 'Gibraltar'
+    },
+
+    {
+        'real_name': 'Blizzard World',
+        'alt_name': 'Blizzard World'
+    },
+    {
+        'real_name': 'Eichenwalde',
+        'alt_name': 'Eichenwalde'
+    },
+    {
+        'real_name': 'Hollywood',
+        'alt_name': 'Hollywood'
+    },
+    {
+        'real_name': "King's Row",
+        'alt_name': "King's Row"
+    },
+
+    {
+        'real_name': 'Numbani',
+        'alt_name': 'Numbani'
+    },
+    {
+        'real_name': 'Busan',
+        'alt_name': 'Busan'
+    },
+    {
+        'real_name': 'Ilios',
+        'alt_name': 'Ilios'
+    },
+    {
+        'real_name': 'Lijiang Tower',
+        'alt_name': 'Lijiang'
+    },
+    {
+        'real_name': 'Nepal',
+        'alt_name': 'Nepal'
+    },
+    {
+        'real_name': 'Oasis',
+        'alt_name': 'Oasis'
+    }
+]
+
+HERO_ALT_NAME = [
+    {
+        'real_name': 'D.Va',
+        'alt_name': 'D.Va'
+    },
+    {
+        'real_name': 'Orisa',
+        'alt_name': 'Orisa'
+    },
+    {
+        'real_name': 'Reinhardt',
+        'alt_name': 'Reinhardt'
+    },
+    {
+        'real_name': 'Roadhog',
+        'alt_name': 'Roadhog'
+    },
+    {
+        'real_name': 'Sigma',
+        'alt_name': 'Sigma'
+    },
+    {
+        'real_name': 'Winston',
+        'alt_name': 'Winston'
+    },
+    {
+        'real_name': 'Wrecking Ball',
+        'alt_name': 'Wrecking Ball'
+    },
+    {
+        'real_name': 'Zarya',
+        'alt_name': 'Zarya'
+    },
+    {
+        'real_name': 'Ashe',
+        'alt_name': 'Ashe'
+    },
+    {
+        'real_name': 'Bastion',
+        'alt_name': 'Bastion'
+    },
+    {
+        'real_name': 'Cassidy',
+        'alt_name': 'Cassidy'
+    },
+    {
+        'real_name': 'Doomfist',
+        'alt_name': 'Doomfist'
+    },
+    {
+        'real_name': 'Echo',
+        'alt_name': 'Echo'
+    },
+    {
+        'real_name': 'Genji',
+        'alt_name': 'Genji'
+    },
+    {
+        'real_name': 'Hanzo',
+        'alt_name': 'Hanzo'
+    },
+    {
+        'real_name': 'Junkrat',
+        'alt_name': 'Junkrat'
+    },
+    {
+        'real_name': 'Mei',
+        'alt_name': 'Mei'
+    },
+    {
+        'real_name': 'Pharah',
+        'alt_name': 'Pharah'
+    },
+    {
+        'real_name': 'Reaper',
+        'alt_name': 'Reaper'
+    },
+    {
+        'real_name': 'Soldier: 76',
+        'alt_name': 'Soldier: 76'
+    },
+    {
+        'real_name': 'Sombra',
+        'alt_name': 'Sombra'
+    },
+    {
+        'real_name': 'Symmetra',
+        'alt_name': 'Symmetra'
+    },
+    {
+        'real_name': 'Torbjorn',
+        'alt_name': 'Torbjörn'
+    },
+    {
+        'real_name': 'Tracer',
+        'alt_name': 'Tracer'
+    },
+    {
+        'real_name': 'Widowmaker',
+        'alt_name': 'Widowmaker'
+    },
+    {
+        'real_name': 'Ana',
+        'alt_name': 'Ana'
+    },
+    {
+        'real_name': 'Baptiste',
+        'alt_name': 'Baptiste'
+    },
+    {
+        'real_name': 'Brigitte',
+        'alt_name': 'Brigitte'
+    },
+    {
+        'real_name': 'Lucio',
+        'alt_name': 'Lúcio'
+    },
+    {
+        'real_name': 'Mercy',
+        'alt_name': 'Mercy'
+    },
+    {
+        'real_name': 'Moira',
+        'alt_name': 'Moira'
+    },
+    {
+        'real_name': 'Zenyatta',
+        'alt_name': 'Zenyatta'
+    },
+]
