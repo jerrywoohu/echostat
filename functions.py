@@ -1,10 +1,30 @@
-from PIL import Image, ImageOps, ImageEnhance
+from PIL import Image, ImageOps, ImageGrab
 import pytesseract
 import difflib
 from CONSTANTS import *
 from USER_CONFIG import *
+import win32gui
+import time
 
 pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract'
+
+def screenshot_ow_window():
+    toplist, winlist = [], []
+    def enum_cb(hwnd, results):
+        winlist.append((hwnd, win32gui.GetWindowText(hwnd)))
+    win32gui.EnumWindows(enum_cb, toplist)
+
+    game_window = [(hwnd, title) for hwnd, title in winlist if 'Overwatch' ==  title][0][0]
+
+    win32gui.SetForegroundWindow(game_window)
+    bbox = win32gui.GetWindowRect(game_window)
+    time.sleep(0.1)
+    screenshot = ImageGrab.grab(bbox)
+    width, height = screenshot.size
+    if height == 1440 or height == 1080 or height == 2160:
+        return screenshot
+    else:
+        return crop_windows_decoration(screenshot)
 
 def pad_image(image):
     right = 64
@@ -17,6 +37,10 @@ def pad_image(image):
     result = Image.new(image.mode, (new_width, new_height), (255, 255, 255))
     result.paste(image, (left, top))
     return result
+
+def crop_windows_decoration(image):
+    width, height = image.size
+    return image.crop((8, 0, width-8, height-8))
 
 def crop_ratio(image, ratio):
     width, height = image.size
