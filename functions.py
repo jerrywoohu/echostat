@@ -5,8 +5,18 @@ from CONSTANTS import *
 from USER_CONFIG import *
 import win32gui
 import time
+import winsound
 
 pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract'
+
+def success_sound():
+    winsound.Beep(1000, 100)
+    winsound.Beep(3000, 100)
+def fail_sound():
+    winsound.Beep(1000, 100)
+    winsound.Beep(1000, 100)
+def neutral_sound():
+    winsound.Beep(2000, 200)
 
 def screenshot_ow_window():
     toplist, winlist = [], []

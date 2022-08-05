@@ -7,10 +7,12 @@ import win32con
 HOTKEY = (win32con.VK_F3, win32con.MOD_WIN)
 
 def DoTheThing():
+    neutral_sound()
     screenshot = screenshot_ow_window()
 
     cropped = crop_ratio(screenshot, SCREEN_RATIO)
-    cropped.show()
+    cropped.save('./log/' + time.strftime('%y-%m-%d %H-%M-%S') + '.png')
+    # cropped.show()
     match_result = combine_stats(cropped)
     print(match_result)
 
@@ -18,17 +20,21 @@ def DoTheThing():
 
     if len(inferred_hero) == 0:
         print('error: could not infer hero')
+        fail_sound()
         input_hero = ''
     elif len(STAT_MAPS) == len(inferred_hero):
         print('error: could not infer hero')
+        fail_sound()
         return
     elif len(inferred_hero) == 1:
         print('inferred hero: ' + inferred_hero[0]['hero_name'])
         input_hero = inferred_hero[0]['hero_name']
+        success_sound()
     else:
         print('multiple heros inferred')
         for hero in inferred_hero: 
             print(hero)
+        fail_sound()
         input_hero = input('hero: ')
 
     if windll.user32.OpenClipboard(None):
