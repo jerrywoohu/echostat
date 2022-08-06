@@ -162,7 +162,7 @@ def ocr_on_words(image):
 def combine_stats(image):
     hero_name = get_prepped_region(image, STAT_REGIONS['hero_name_region'])
     # hero_name.show()
-    match_time = get_prepped_region(image, STAT_REGIONS['match_time_region'], point=32, scale_brightness=True)
+    match_time = get_prepped_region(image, STAT_REGIONS['match_time_region'], point=60, scale_brightness=True)
     # match_time.show()
 
     gstat1 = get_prepped_region(image, STAT_REGIONS['g_region1'])
@@ -297,7 +297,7 @@ def infer_hero(hero_stats):
             if massaged_name in stat_dict:
                 count += 1
             else:
-                matches = difflib.get_close_matches(massaged_name, stat_dict, n=1)
+                matches = difflib.get_close_matches(massaged_name, stat_dict, n=1, cutoff=0.7)
                 # print(matches)
                 count += len(matches)
         # print('\t', count)

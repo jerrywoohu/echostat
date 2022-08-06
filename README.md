@@ -28,5 +28,6 @@ Designed to be used with [this spreadsheet](https://owspreadsheet.jerrywoohu.com
 
 ## Known Issues
 * `11` often gets read as `0`. For example, 11 deaths often gets read as 0 deaths
+* 1080p decreases OCR accuracy significantly compared to 1440p
 
 Overwatch is a trademark of Blizzard Entertainment, Inc., in the U.S. and/or other countries.
