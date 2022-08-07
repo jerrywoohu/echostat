@@ -24,17 +24,19 @@ def screenshot_ow_window():
         winlist.append((hwnd, win32gui.GetWindowText(hwnd)))
     win32gui.EnumWindows(enum_cb, toplist)
 
-    game_window = [(hwnd, title) for hwnd, title in winlist if 'Overwatch' ==  title][0][0]
-
-    win32gui.SetForegroundWindow(game_window)
-    bbox = win32gui.GetWindowRect(game_window)
-    time.sleep(0.1)
-    screenshot = ImageGrab.grab(bbox)
-    width, height = screenshot.size
-    if height == 1440 or height == 1080 or height == 2160:
-        return screenshot
-    else:
-        return crop_windows_decoration(screenshot)
+    try:
+        game_window = [(hwnd, title) for hwnd, title in winlist if 'Overwatch' ==  title][0][0]
+        win32gui.SetForegroundWindow(game_window)
+        bbox = win32gui.GetWindowRect(game_window)
+        time.sleep(0.1)
+        screenshot = ImageGrab.grab(bbox)
+        width, height = screenshot.size
+        if height == 1440 or height == 1080 or height == 2160:
+            return screenshot
+        else:
+            return crop_windows_decoration(screenshot)
+    except:
+        return None
 
 def pad_image(image):
     right = 64
@@ -95,11 +97,7 @@ def prep_image_for_ocr(image, point, mono, scale_brightness, channel):
         scrap = scrap.point(lambda p: 255 if p > point else 0)
     else:
         if scale_brightness:
-            histogram = scrap.histogram()
-            max = point
-            for index in range(len(histogram) - point): 
-                if histogram[index + point] != 0:
-                    max = index + point
+            max = get_brightest_lum(scrap, point)
             scrap = scrap.point(lambda p: __scale(p, point, max))
         else: 
             scrap = scrap.point(lambda p: p if p > point else 0)
@@ -107,12 +105,22 @@ def prep_image_for_ocr(image, point, mono, scale_brightness, channel):
     scrap = pad_image(scrap)
     return scrap
 
+def get_brightest_lum(image, start_at=0):
+    if image.mode.upper() != 'L':
+        image = image.convert('L')
+    histogram = image.histogram()
+    max = start_at
+    for index in range(len(histogram) - start_at): 
+        if histogram[index + start_at] != 0:
+            max = index + start_at
+    return max
+
 def __scale(p, min, max):
     if p < min: return 0
     value = (p / max) * 255
     return 255 if value > 255 else value
 
-def get_prepped_region(source, region, point=86, mono=False, scale_brightness=False, channel='all'):
+def get_prepped_region(source, region, point=86, mono=False, scale_brightness=True, channel='all'):
     return prep_image_for_ocr(get_image_by_region(source, region), point, mono, scale_brightness, channel)
 
 def ocr_on_stat(image):
@@ -160,10 +168,12 @@ def ocr_on_words(image):
 #     return result
 
 def combine_stats(image):
+
+    dimmed_value = get_brightest_lum(get_image_by_region(image, STAT_REGIONS['g_region1']))
+    dimmed = True if dimmed_value < 128 else False
+
     hero_name = get_prepped_region(image, STAT_REGIONS['hero_name_region'])
-    # hero_name.show()
-    match_time = get_prepped_region(image, STAT_REGIONS['match_time_region'], point=60, scale_brightness=True)
-    # match_time.show()
+    match_time = get_prepped_region(image, STAT_REGIONS['match_time_region'], point=24 if dimmed else 56)
 
     gstat1 = get_prepped_region(image, STAT_REGIONS['g_region1'])
     gstat2 = get_prepped_region(image, STAT_REGIONS['g_region2'])
@@ -171,24 +181,31 @@ def combine_stats(image):
     gstat4 = get_prepped_region(image, STAT_REGIONS['g_region4'])
     gstat5 = get_prepped_region(image, STAT_REGIONS['g_region5'])
     gstat6 = get_prepped_region(image, STAT_REGIONS['g_region6'])
-    # gstat4.show()
-    # gstat6.show()
+
     hstat1 = get_prepped_region(image, STAT_REGIONS['h_region1'])
     hstat2 = get_prepped_region(image, STAT_REGIONS['h_region2'])
     hstat3 = get_prepped_region(image, STAT_REGIONS['h_region3'])
     hstat4 = get_prepped_region(image, STAT_REGIONS['h_region4'])
     hstat5 = get_prepped_region(image, STAT_REGIONS['h_region5'])
     hstat6 = get_prepped_region(image, STAT_REGIONS['h_region6'])
+
+    hstat1_name = get_prepped_region(image, STAT_REGIONS['h_region1_name'], point=20 if dimmed else 86)
+    hstat2_name = get_prepped_region(image, STAT_REGIONS['h_region2_name'], point=20 if dimmed else 86)
+    hstat3_name = get_prepped_region(image, STAT_REGIONS['h_region3_name'], point=20 if dimmed else 86)
+    hstat4_name = get_prepped_region(image, STAT_REGIONS['h_region4_name'], point=20 if dimmed else 86)
+    hstat5_name = get_prepped_region(image, STAT_REGIONS['h_region5_name'], point=20 if dimmed else 86)
+    hstat6_name = get_prepped_region(image, STAT_REGIONS['h_region6_name'], point=20 if dimmed else 86)
+
+    # hero_name.show()
+    # match_time.show()
+
+    # gstat1.show()
+    # gstat4.show()
+    # gstat6.show()
+    
     # hstat4.show()
     # hstat5.show()
     # hstat6.show()
-
-    hstat1_name = get_prepped_region(image, STAT_REGIONS['h_region1_name'], scale_brightness=True)
-    hstat2_name = get_prepped_region(image, STAT_REGIONS['h_region2_name'], scale_brightness=True)
-    hstat3_name = get_prepped_region(image, STAT_REGIONS['h_region3_name'], scale_brightness=True)
-    hstat4_name = get_prepped_region(image, STAT_REGIONS['h_region4_name'], scale_brightness=True)
-    hstat5_name = get_prepped_region(image, STAT_REGIONS['h_region5_name'], scale_brightness=True)
-    hstat6_name = get_prepped_region(image, STAT_REGIONS['h_region6_name'], scale_brightness=True)
 
     # hstat1_name.show()
     # hstat2_name.show()
@@ -196,6 +213,7 @@ def combine_stats(image):
     # hstat4_name.show()
     # hstat5_name.show()
     # hstat6_name.show()
+
 
     g_stats = {
         'eliminations': ocr_on_stat(gstat1),

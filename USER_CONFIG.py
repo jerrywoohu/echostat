@@ -31,7 +31,7 @@ COLUMN_MAP = {
     'widowmaker':       GENERAL_COLUMN_MAP + ['scoped_critical_hits', 'scoped_accuracy'],
     
     'ana':              GENERAL_COLUMN_MAP + ['enemies_slept', 'unscoped_accuracy', 'scoped_accuracy'],
-    'baptiste':         GENERAL_COLUMN_MAP + ['immortality_field_deaths_prevented', 'weapon_accuracy'],
+    'baptiste':         GENERAL_COLUMN_MAP + ['immortality_field_deaths_prevented', 'weapon_accuracy', 'healing_accuracy'],
     'brigitte':         GENERAL_COLUMN_MAP + ['damage_blocked', 'inspire_uptime_percentage'],
     'lucio':            GENERAL_COLUMN_MAP + ['sound_barriers_provided', 'weapon_accuracy'],
     'mercy':            GENERAL_COLUMN_MAP + ['damage_amplified', 'players_resurrected', 'blaster_kills'],

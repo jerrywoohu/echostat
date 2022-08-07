@@ -7,8 +7,11 @@ import win32con
 HOTKEY = (win32con.VK_F3, win32con.MOD_WIN)
 
 def DoTheThing():
-    neutral_sound()
     screenshot = screenshot_ow_window()
+    if screenshot == None: 
+        print('Overwatch window cannot be found')
+        return
+    neutral_sound()
 
     cropped = crop_ratio(screenshot, SCREEN_RATIO)
     cropped.save('./log/' + time.strftime('%y-%m-%d %H-%M-%S') + '.png')
